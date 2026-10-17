@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   =  "../generated/prisma"
@@ -23,4 +18,32 @@ model User{
    email    String @unique
   password String
   role  Role @default(USER)
+  createdEvents Event[]        @relation("OrganizedEvents")
+  registrations Registration[]
+}
+
+model Event {
+  id            Int            @id @default(autoincrement())
+  title         String
+  description   String
+  date          DateTime       @db.Date
+  time          String
+  address       String
+  category      String
+  price         Int            @default(0)
+  seats         Int
+  imageUrl      String?
+  organizerId   Int
+  organizer     User           @relation("OrganizedEvents", fields: [organizerId], references: [id], onDelete: Cascade)
+  registrations Registration[]
+}
+
+model Registration {
+  id      Int   @id @default(autoincrement())
+  userId  Int
+  eventId Int
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventId])
 }

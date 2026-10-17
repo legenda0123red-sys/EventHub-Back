@@ -3,9 +3,11 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   Param,
   ParseIntPipe,
   Post,
+  UnauthorizedException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -13,6 +15,7 @@ import {
   ApiResponse,
   ApiParam,
   ApiBody,
+  ApiHeader,
 } from '@nestjs/swagger';
 
 import { UsersService } from './users.service';
@@ -54,5 +57,16 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'Пользователь не найден' })
   async deleteUser(@Param('id', ParseIntPipe) id: number) {
     return this.users.deleteUser(id);
+  }
+    @Get('me/events')
+  @ApiOperation({ summary: 'Мои мероприятия (созданные и записанные)' })
+  @ApiHeader({ name: 'x-user-id', description: 'ВРЕМЕННО: id пользователя' })
+  @ApiResponse({ status: 200, description: 'created и registered' })
+  @ApiResponse({ status: 401, description: 'Пользователь не определён' })
+  async getMyEvents(@Headers('x-user-id') userIdHeader?: string) {
+    // TODO: заменить на id пользователя из авторизации (JWT-гард), когда она будет готова
+    const userId = Number(userIdHeader);
+    if (!Number.isInteger(userId)) throw new UnauthorizedException();
+    return this.users.getMyEvents(userId);
   }
 }
