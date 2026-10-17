@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -17,8 +18,11 @@ import {
 
 import { UsersService } from './users.service';
 import { UserDto } from '../dto/user-dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
 
 @ApiTags('Users')
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly users: UsersService) {}
@@ -47,6 +51,7 @@ export class UsersController {
     return this.users.getUserById(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete('delete/:id')
   @ApiOperation({ summary: 'Удалить пользователя' })
   @ApiParam({ name: 'id', type: Number, description: 'ID пользователя' })
@@ -54,5 +59,14 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'Пользователь не найден' })
   async deleteUser(@Param('id', ParseIntPipe) id: number) {
     return this.users.deleteUser(id);
+  }
+
+  @Get('one/:email')
+  @ApiOperation({ summary: 'Найти пользователя по email' })
+  @ApiParam({ name: 'email', type: String, description: 'Email пользователя' })
+  @ApiResponse({ status: 200, description: 'Пользователь найден' })
+  @ApiResponse({ status: 404, description: 'Пользователь не найден' })
+  async findUserByEmail(@Param('email') email: string) {
+    return this.users.findUserByEmail(email);
   }
 }

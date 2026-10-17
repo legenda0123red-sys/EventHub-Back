@@ -5,7 +5,6 @@ import { UserDto } from '../dto/user-dto';
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
-
   async getUsers() {
     return this.prisma.user.findMany();
   }
@@ -22,4 +21,7 @@ export class UsersService {
     return this.prisma.user.delete({ where: { id } });
   }
 
+  async findUserByEmail(email: string) {
+    return this.prisma.user.findUnique({ where: { email } });
+  }
 }
