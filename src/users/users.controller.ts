@@ -64,7 +64,6 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'created и registered' })
   @ApiResponse({ status: 401, description: 'Пользователь не определён' })
   async getMyEvents(@Headers('x-user-id') userIdHeader?: string) {
-    // TODO: заменить на id пользователя из авторизации (JWT-гард), когда она будет готова
     const userId = Number(userIdHeader);
     if (!Number.isInteger(userId)) throw new UnauthorizedException();
     return this.users.getMyEvents(userId);
