@@ -10,6 +10,7 @@ import { RegisterDto } from '../dto/register-dto';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from '../dto/login-dto';
 import { report } from 'process';
+import { UserDto } from '../dto/user-dto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -69,5 +70,11 @@ export class AuthService {
         role: user.role,
       },
     };
+  }
+
+  async getMe(id: number) {
+    return this.prisma.user.findUnique({
+      where: { id },
+    });
   }
 }

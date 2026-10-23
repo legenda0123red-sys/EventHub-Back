@@ -6,12 +6,14 @@ import {
   HttpStatus,
   Get,
   Req,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
 import { RegisterDto } from '../dto/register-dto';
 import { LoginDto } from '../dto/login-dto';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -48,5 +50,27 @@ export class AuthController {
   async login(@Body() body: LoginDto) {
     return this.auth.login(body);
   }
+
+@Get('profile')
+@UseGuards(JwtAuthGuard)
+@ApiOperation({ summary: 'Получить профиль текущего пользователя' })
+@ApiBearerAuth()
+@ApiResponse({
+  status: 200,
+  description: 'Профиль пользователя успешно получен',
+})
+@ApiResponse({
+  status: 401,
+  description: 'Не авторизован',
+})
+async getMe(
+  @Req() req: Request & {
+    user: {
+      sub: number;
+    };
+  },
+) {
+  return this.auth.getMe(req.user.sub);
+}
 
 }
