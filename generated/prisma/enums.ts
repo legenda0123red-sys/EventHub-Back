@@ -15,3 +15,21 @@ export const Role = {
 } as const
 
 export type Role = (typeof Role)[keyof typeof Role]
+
+
+export const EventStatus = {
+  PUBLISHED: 'PUBLISHED',
+  MODERATION: 'MODERATION',
+  DRAFT: 'DRAFT'
+} as const
+
+export type EventStatus = (typeof EventStatus)[keyof typeof EventStatus]
+
+
+export const UserStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  BANNED: 'BANNED'
+} as const
+
+export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus]

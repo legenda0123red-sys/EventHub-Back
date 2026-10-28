@@ -77,6 +77,7 @@ export const UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   role: 'role',
+  status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -88,6 +89,8 @@ export const EventScalarFieldEnum = {
   id: 'id',
   title: 'title',
   description: 'description',
+  category: 'category',
+  status: 'status',
   date: 'date',
   address: 'address',
   price: 'price',
