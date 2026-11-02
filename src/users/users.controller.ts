@@ -1,3 +1,77 @@
+// import {
+//   Body,
+//   Controller,
+//   Delete,
+//   Get,
+//   Param,
+//   ParseIntPipe,
+//   Post,
+//   UseGuards,
+// } from '@nestjs/common';
+// import {
+//   ApiTags,
+//   ApiOperation,
+//   ApiResponse,
+//   ApiParam,
+//   ApiBody,
+// } from '@nestjs/swagger';
+
+// import { UsersService } from './users.service';
+// import { UserDto } from '../dto/user-dto';
+// import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+// import { RolesGuard } from '../auth/roles.guard';
+
+// @ApiTags('Users')
+// @UseGuards(JwtAuthGuard, RolesGuard)
+// @Controller('users')
+// export class UsersController {
+//   constructor(private readonly users: UsersService) {}
+
+//   @Get('all')
+//   @ApiOperation({ summary: 'Получить всех пользователей' })
+//   @ApiResponse({ status: 200, description: 'Список пользователей' })
+//   async getUsers() {
+//     return this.users.getUsers();
+//   }
+
+//   @Post('create')
+//   @ApiOperation({ summary: 'Создать пользователя' })
+//   @ApiBody({ type: UserDto })
+//   @ApiResponse({ status: 201, description: 'Пользователь создан' })
+//   async createUser(@Body() body: UserDto) {
+//     return this.users.createUsers(body);
+//   }
+
+//   @Get('one/:id')
+//   @ApiOperation({ summary: 'Получить пользователя по ID' })
+//   @ApiParam({ name: 'id', type: Number, description: 'ID пользователя' })
+//   @ApiResponse({ status: 200, description: 'Пользователь найден' })
+//   @ApiResponse({ status: 404, description: 'Пользователь не найден' })
+//   async getUserById(@Param('id', ParseIntPipe) id: number) {
+//     return this.users.getUserById(id);
+//   }
+
+//   @UseGuards(JwtAuthGuard)
+//   @Delete('delete/:id')
+//   @ApiOperation({ summary: 'Удалить пользователя' })
+//   @ApiParam({ name: 'id', type: Number, description: 'ID пользователя' })
+//   @ApiResponse({ status: 200, description: 'Пользователь удалён' })
+//   @ApiResponse({ status: 404, description: 'Пользователь не найден' })
+//   async deleteUser(@Param('id', ParseIntPipe) id: number) {
+//     return this.users.deleteUser(id);
+//   }
+
+//   @Get('one/:email')
+//   @ApiOperation({ summary: 'Найти пользователя по email' })
+//   @ApiParam({ name: 'email', type: String, description: 'Email пользователя' })
+//   @ApiResponse({ status: 200, description: 'Пользователь найден' })
+//   @ApiResponse({ status: 404, description: 'Пользователь не найден' })
+//   async findUserByEmail(@Param('email') email: string) {
+//     return this.users.findUserByEmail(email);
+//   }
+// }
+
+
 import {
   Body,
   Controller,
@@ -6,6 +80,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -21,12 +96,26 @@ import { UserDto } from '../dto/user-dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 
+interface AuthenticatedRequest {
+  user: {
+    sub: number;
+  };
+}
+
 @ApiTags('Users')
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly users: UsersService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @Get('me/events')
+  @ApiOperation({ summary: 'Получить мероприятия текущего пользователя' })
+  @ApiResponse({ status: 200, description: 'Объект с созданными и посещаемыми ивентами' })
+  async getMyEventsAndRegistrations(@Req() req: AuthenticatedRequest) {
+    return this.users.getMyEventsAndRegistrations(req.user.sub);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('all')
   @ApiOperation({ summary: 'Получить всех пользователей' })
   @ApiResponse({ status: 200, description: 'Список пользователей' })
@@ -34,6 +123,7 @@ export class UsersController {
     return this.users.getUsers();
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('create')
   @ApiOperation({ summary: 'Создать пользователя' })
   @ApiBody({ type: UserDto })
@@ -42,6 +132,7 @@ export class UsersController {
     return this.users.createUsers(body);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('one/:id')
   @ApiOperation({ summary: 'Получить пользователя по ID' })
   @ApiParam({ name: 'id', type: Number, description: 'ID пользователя' })
@@ -61,6 +152,7 @@ export class UsersController {
     return this.users.deleteUser(id);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('one/:email')
   @ApiOperation({ summary: 'Найти пользователя по email' })
   @ApiParam({ name: 'email', type: String, description: 'Email пользователя' })

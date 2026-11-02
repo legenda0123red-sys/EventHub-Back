@@ -11,6 +11,8 @@ import * as bcrypt from 'bcrypt';
 import { LoginDto } from '../dto/login-dto';
 import { report } from 'process';
 import { UserDto } from '../dto/user-dto';
+import Role  from '@prisma/client'; 
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -19,25 +21,29 @@ export class AuthService {
     private readonly prisma: PrismaService,
   ) {}
 
-  async register(body: RegisterDto) {
-    const existingUser = await this.prisma.user.findUnique({
-      where: { email: body.email },
-    });
+ // auth.service.ts
+async register(body: RegisterDto) {
+  const existingUser = await this.prisma.user.findUnique({
+    where: { email: body.email },
+  });
 
-    if (existingUser) {
-      throw new ConflictException('Пользователь с таким email уже существует');
-    }
-
-    const hashedPass = await bcrypt.hash(body.password, 10);
-
-    return this.prisma.user.create({
-      data: {
-        name: body.name,
-        email: body.email,
-        password: hashedPass,
-      },
-    });
+  if (existingUser) {
+    throw new ConflictException('Пользователь с таким email уже существует');
   }
+
+  const hashedPass = await bcrypt.hash(body.password, 10);
+
+  return this.prisma.user.create({
+    data: {
+      name: body.name,
+      email: body.email,
+      password: hashedPass,
+      // Если с фронтенда пришла роль, пишем её, иначе ставим 'USER' по умолчанию
+      role: (body.role as 'USER' | 'ADMIN') || 'USER'
+    },
+  });
+}
+
 
   async login(body: LoginDto) {
     const user = await this.users.findUserByEmail(body.email);

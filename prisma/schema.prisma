@@ -4,12 +4,14 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   =  "../generated/prisma"
+  provider = "prisma-client-js"
+  
 }
+// output   =  "../generated/prisma"
 
 datasource db {
   provider = "postgresql"
+  
 }
 
 enum Role  {
@@ -40,6 +42,7 @@ model User {
   status    UserStatus  @default(ACTIVE)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+   registeredIds   Int[]        @default([])
 }
 
 model Event {
@@ -59,13 +62,8 @@ model Event {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+   participantIds Int[]    @default([])
 }
-
-
-
-
-
-
 
 
 
