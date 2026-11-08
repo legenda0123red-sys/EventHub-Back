@@ -7,10 +7,15 @@ import { UsersService } from '../users/users.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from '../dto/register-dto';
-import * as bcrypt from 'bcrypt';
+import { hash, compare } from 'bcrypt';
 import { LoginDto } from '../dto/login-dto';
-import { report } from 'process';
-import { UserDto } from '../dto/user-dto';
+export interface UserPayload {
+  sub: number;
+  email: string;
+  name: string;
+  role: string;
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -28,7 +33,7 @@ export class AuthService {
       throw new ConflictException('Пользователь с таким email уже существует');
     }
 
-    const hashedPass = await bcrypt.hash(body.password, 10);
+    const hashedPass = await hash(body.password, 10);
 
     return this.prisma.user.create({
       data: {
@@ -46,7 +51,7 @@ export class AuthService {
       throw new UnauthorizedException('Неверный email или пароль');
     }
 
-    const isPasswordValid = await bcrypt.compare(body.password, user.password);
+    const isPasswordValid = await compare(body.password, user.password);
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Неверный email или пароль');
@@ -73,8 +78,20 @@ export class AuthService {
   }
 
   async getMe(id: number) {
-    return this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+      },
     });
+
+    if (!user) {
+      throw new UnauthorizedException('Пользователь не найден');
+    }
+
+    return user;
   }
 }
