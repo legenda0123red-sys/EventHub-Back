@@ -4,17 +4,31 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   =  "../generated/prisma"
+  provider = "prisma-client-js"
+  
 }
+// output   =  "../generated/prisma"
 
 datasource db {
   provider = "postgresql"
+  
 }
 
 enum Role  {
 ADMIN
 USER
+}
+
+enum EventStatus {
+  PUBLISHED     
+  MODERATION    
+  DRAFT         
+}
+
+enum UserStatus {
+  ACTIVE        
+  INACTIVE      
+  BANNED        
 }
 
 
@@ -24,15 +38,19 @@ model User {
   email     String   @unique
   password  String
   events    Event[]
-  role Role  @default(USER)
+  role      Role     @default(USER)
+  status    UserStatus  @default(ACTIVE)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+   registeredIds   Int[]        @default([])
 }
 
 model Event {
   id          Int      @id @default(autoincrement())
   title       String   @db.VarChar(100)
   description String   @db.VarChar(500)
+  category    String      @default("Фестивали") @db.VarChar(50)
+  status      EventStatus @default(MODERATION)
   date        DateTime
   address     String   @db.VarChar(125)
   price       Decimal  @db.Decimal(10, 2)
@@ -44,4 +62,10 @@ model Event {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+   participantIds Int[]    @default([])
 }
+
+
+
+
+

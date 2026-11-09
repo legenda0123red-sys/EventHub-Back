@@ -1,14 +1,19 @@
+
 import {
   ConflictException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+
 import { UsersService } from '../users/users.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
+
 import { RegisterDto } from '../dto/register-dto';
-import { hash, compare } from 'bcrypt';
 import { LoginDto } from '../dto/login-dto';
+
+import { hash, compare } from 'bcrypt';
+
 export interface UserPayload {
   sub: number;
   email: string;
@@ -30,7 +35,9 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new ConflictException('Пользователь с таким email уже существует');
+      throw new ConflictException(
+        'Пользователь с таким email уже существует',
+      );
     }
 
     const hashedPass = await hash(body.password, 10);
@@ -40,6 +47,7 @@ export class AuthService {
         name: body.name,
         email: body.email,
         password: hashedPass,
+        role: (body.role as 'USER' | 'ADMIN') || 'USER',
       },
     });
   }
@@ -51,13 +59,16 @@ export class AuthService {
       throw new UnauthorizedException('Неверный email или пароль');
     }
 
-    const isPasswordValid = await compare(body.password, user.password);
+    const isPasswordValid = await compare(
+      body.password,
+      user.password,
+    );
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Неверный email или пароль');
     }
 
-    const payload = {
+    const payload: UserPayload = {
       sub: user.id,
       email: user.email,
       name: user.name,

@@ -1,13 +1,16 @@
+
 import {
   IsString,
   IsNotEmpty,
   IsDateString,
   IsNumber,
+  IsInt,
   IsUrl,
   Min,
   Max,
   MaxLength,
   MinLength,
+  IsOptional,
 } from 'class-validator';
 
 export class EventDto {
@@ -42,7 +45,7 @@ export class EventDto {
   @Max(10000000, { message: 'Цена слишком большая' })
   price: number;
 
-  @IsNumber({}, { message: 'Вместимость должна быть числом' })
+  @IsInt({ message: 'Вместимость должна быть целым числом' })
   @Min(1, { message: 'Вместимость должна быть минимум 1 человек' })
   @Max(1000000, { message: 'Вместимость слишком большая' })
   capacity: number;
@@ -55,4 +58,9 @@ export class EventDto {
     { message: 'Укажите корректную ссылку на изображение' },
   )
   image: string;
+
+  @IsString({ message: 'Категория должна быть строкой' })
+  @IsOptional()
+  @MaxLength(50, { message: 'Категория не должна превышать 50 символов' })
+  category?: string;
 }

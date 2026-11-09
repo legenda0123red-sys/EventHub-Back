@@ -1,3 +1,4 @@
+
 import {
   Body,
   Controller,
@@ -6,6 +7,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 
@@ -23,13 +25,32 @@ import { UserDto } from '../dto/user-dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 
+interface AuthenticatedRequest {
+  user: {
+    sub: number;
+  };
+}
+
 @ApiTags('Users')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly users: UsersService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @Get('me/events')
+  @ApiOperation({
+    summary: 'Получить мероприятия текущего пользователя',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Объект с созданными и посещаемыми ивентами',
+  })
+  async getMyEventsAndRegistrations(@Req() req: AuthenticatedRequest) {
+    return this.users.getMyEventsAndRegistrations(req.user.sub);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('all')
   @ApiOperation({
     summary: 'Получить всех пользователей',
@@ -67,6 +88,7 @@ export class UsersController {
     return this.users.getUsers();
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('create')
   @ApiOperation({
     summary: 'Создать пользователя',
@@ -89,11 +111,15 @@ export class UsersController {
     status: 409,
     description: 'Пользователь с таким email уже существует',
   })
-  @ApiResponse({ status: 400, description: 'Ошибка валидации данных' })
+  @ApiResponse({
+    status: 400,
+    description: 'Ошибка валидации данных',
+  })
   async createUser(@Body() body: UserDto) {
     return this.users.createUsers(body);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('one/:id')
   @ApiOperation({
     summary: 'Получить пользователя по ID',
@@ -123,6 +149,7 @@ export class UsersController {
     return this.users.getUserById(id);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete('delete/:id')
   @ApiOperation({
     summary: 'Удалить пользователя',
@@ -150,6 +177,7 @@ export class UsersController {
     return this.users.deleteUser(id);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('email/:email')
   @ApiOperation({
     summary: 'Найти пользователя по email',

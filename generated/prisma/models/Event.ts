@@ -44,6 +44,8 @@ export type EventMinAggregateOutputType = {
   id: number | null
   title: string | null
   description: string | null
+  category: string | null
+  status: $Enums.EventStatus | null
   date: Date | null
   address: string | null
   price: runtime.Decimal | null
@@ -58,6 +60,8 @@ export type EventMaxAggregateOutputType = {
   id: number | null
   title: string | null
   description: string | null
+  category: string | null
+  status: $Enums.EventStatus | null
   date: Date | null
   address: string | null
   price: runtime.Decimal | null
@@ -72,6 +76,8 @@ export type EventCountAggregateOutputType = {
   id: number
   title: number
   description: number
+  category: number
+  status: number
   date: number
   address: number
   price: number
@@ -102,6 +108,8 @@ export type EventMinAggregateInputType = {
   id?: true
   title?: true
   description?: true
+  category?: true
+  status?: true
   date?: true
   address?: true
   price?: true
@@ -116,6 +124,8 @@ export type EventMaxAggregateInputType = {
   id?: true
   title?: true
   description?: true
+  category?: true
+  status?: true
   date?: true
   address?: true
   price?: true
@@ -130,6 +140,8 @@ export type EventCountAggregateInputType = {
   id?: true
   title?: true
   description?: true
+  category?: true
+  status?: true
   date?: true
   address?: true
   price?: true
@@ -231,6 +243,8 @@ export type EventGroupByOutputType = {
   id: number
   title: string
   description: string
+  category: string
+  status: $Enums.EventStatus
   date: Date
   address: string
   price: runtime.Decimal
@@ -268,6 +282,8 @@ export type EventWhereInput = {
   id?: Prisma.IntFilter<"Event"> | number
   title?: Prisma.StringFilter<"Event"> | string
   description?: Prisma.StringFilter<"Event"> | string
+  category?: Prisma.StringFilter<"Event"> | string
+  status?: Prisma.EnumEventStatusFilter<"Event"> | $Enums.EventStatus
   date?: Prisma.DateTimeFilter<"Event"> | Date | string
   address?: Prisma.StringFilter<"Event"> | string
   price?: Prisma.DecimalFilter<"Event"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -283,6 +299,8 @@ export type EventOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  category?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   date?: Prisma.SortOrder
   address?: Prisma.SortOrder
   price?: Prisma.SortOrder
@@ -301,6 +319,8 @@ export type EventWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.EventWhereInput | Prisma.EventWhereInput[]
   title?: Prisma.StringFilter<"Event"> | string
   description?: Prisma.StringFilter<"Event"> | string
+  category?: Prisma.StringFilter<"Event"> | string
+  status?: Prisma.EnumEventStatusFilter<"Event"> | $Enums.EventStatus
   date?: Prisma.DateTimeFilter<"Event"> | Date | string
   address?: Prisma.StringFilter<"Event"> | string
   price?: Prisma.DecimalFilter<"Event"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -316,6 +336,8 @@ export type EventOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  category?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   date?: Prisma.SortOrder
   address?: Prisma.SortOrder
   price?: Prisma.SortOrder
@@ -338,6 +360,8 @@ export type EventScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"Event"> | number
   title?: Prisma.StringWithAggregatesFilter<"Event"> | string
   description?: Prisma.StringWithAggregatesFilter<"Event"> | string
+  category?: Prisma.StringWithAggregatesFilter<"Event"> | string
+  status?: Prisma.EnumEventStatusWithAggregatesFilter<"Event"> | $Enums.EventStatus
   date?: Prisma.DateTimeWithAggregatesFilter<"Event"> | Date | string
   address?: Prisma.StringWithAggregatesFilter<"Event"> | string
   price?: Prisma.DecimalWithAggregatesFilter<"Event"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -351,6 +375,8 @@ export type EventScalarWhereWithAggregatesInput = {
 export type EventCreateInput = {
   title: string
   description: string
+  category?: string
+  status?: $Enums.EventStatus
   date: Date | string
   address: string
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -365,6 +391,8 @@ export type EventUncheckedCreateInput = {
   id?: number
   title: string
   description: string
+  category?: string
+  status?: $Enums.EventStatus
   date: Date | string
   address: string
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -378,6 +406,8 @@ export type EventUncheckedCreateInput = {
 export type EventUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -392,6 +422,8 @@ export type EventUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -406,6 +438,8 @@ export type EventCreateManyInput = {
   id?: number
   title: string
   description: string
+  category?: string
+  status?: $Enums.EventStatus
   date: Date | string
   address: string
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -419,6 +453,8 @@ export type EventCreateManyInput = {
 export type EventUpdateManyMutationInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -432,6 +468,8 @@ export type EventUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -456,6 +494,8 @@ export type EventCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  category?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   date?: Prisma.SortOrder
   address?: Prisma.SortOrder
   price?: Prisma.SortOrder
@@ -477,6 +517,8 @@ export type EventMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  category?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   date?: Prisma.SortOrder
   address?: Prisma.SortOrder
   price?: Prisma.SortOrder
@@ -491,6 +533,8 @@ export type EventMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  category?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   date?: Prisma.SortOrder
   address?: Prisma.SortOrder
   price?: Prisma.SortOrder
@@ -550,6 +594,10 @@ export type EventUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.EventScalarWhereInput | Prisma.EventScalarWhereInput[]
 }
 
+export type EnumEventStatusFieldUpdateOperationsInput = {
+  set?: $Enums.EventStatus
+}
+
 export type DecimalFieldUpdateOperationsInput = {
   set?: runtime.Decimal | runtime.DecimalJsLike | number | string
   increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -561,6 +609,8 @@ export type DecimalFieldUpdateOperationsInput = {
 export type EventCreateWithoutUserInput = {
   title: string
   description: string
+  category?: string
+  status?: $Enums.EventStatus
   date: Date | string
   address: string
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -574,6 +624,8 @@ export type EventUncheckedCreateWithoutUserInput = {
   id?: number
   title: string
   description: string
+  category?: string
+  status?: $Enums.EventStatus
   date: Date | string
   address: string
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -616,6 +668,8 @@ export type EventScalarWhereInput = {
   id?: Prisma.IntFilter<"Event"> | number
   title?: Prisma.StringFilter<"Event"> | string
   description?: Prisma.StringFilter<"Event"> | string
+  category?: Prisma.StringFilter<"Event"> | string
+  status?: Prisma.EnumEventStatusFilter<"Event"> | $Enums.EventStatus
   date?: Prisma.DateTimeFilter<"Event"> | Date | string
   address?: Prisma.StringFilter<"Event"> | string
   price?: Prisma.DecimalFilter<"Event"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -630,6 +684,8 @@ export type EventCreateManyUserInput = {
   id?: number
   title: string
   description: string
+  category?: string
+  status?: $Enums.EventStatus
   date: Date | string
   address: string
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -642,6 +698,8 @@ export type EventCreateManyUserInput = {
 export type EventUpdateWithoutUserInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -655,6 +713,8 @@ export type EventUncheckedUpdateWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -668,6 +728,8 @@ export type EventUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -683,6 +745,8 @@ export type EventSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   id?: boolean
   title?: boolean
   description?: boolean
+  category?: boolean
+  status?: boolean
   date?: boolean
   address?: boolean
   price?: boolean
@@ -698,6 +762,8 @@ export type EventSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   id?: boolean
   title?: boolean
   description?: boolean
+  category?: boolean
+  status?: boolean
   date?: boolean
   address?: boolean
   price?: boolean
@@ -713,6 +779,8 @@ export type EventSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   id?: boolean
   title?: boolean
   description?: boolean
+  category?: boolean
+  status?: boolean
   date?: boolean
   address?: boolean
   price?: boolean
@@ -728,6 +796,8 @@ export type EventSelectScalar = {
   id?: boolean
   title?: boolean
   description?: boolean
+  category?: boolean
+  status?: boolean
   date?: boolean
   address?: boolean
   price?: boolean
@@ -738,7 +808,7 @@ export type EventSelectScalar = {
   updatedAt?: boolean
 }
 
-export type EventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "date" | "address" | "price" | "capacity" | "image" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["event"]>
+export type EventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "category" | "status" | "date" | "address" | "price" | "capacity" | "image" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["event"]>
 export type EventInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -758,6 +828,8 @@ export type $EventPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     id: number
     title: string
     description: string
+    category: string
+    status: $Enums.EventStatus
     date: Date
     address: string
     price: runtime.Decimal
@@ -1193,6 +1265,8 @@ export interface EventFieldRefs {
   readonly id: Prisma.FieldRef<"Event", 'Int'>
   readonly title: Prisma.FieldRef<"Event", 'String'>
   readonly description: Prisma.FieldRef<"Event", 'String'>
+  readonly category: Prisma.FieldRef<"Event", 'String'>
+  readonly status: Prisma.FieldRef<"Event", 'EventStatus'>
   readonly date: Prisma.FieldRef<"Event", 'DateTime'>
   readonly address: Prisma.FieldRef<"Event", 'String'>
   readonly price: Prisma.FieldRef<"Event", 'Decimal'>

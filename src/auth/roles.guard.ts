@@ -1,34 +1,86 @@
+// import {
+//   CanActivate,
+//   ExecutionContext,
+//   ForbiddenException,
+//   Injectable,
+// } from '@nestjs/common';
+// import { Request } from 'express';
+
+// interface AuthenticatedRequest extends Request {
+//   user: {
+//     sub: number;
+//     email: string;
+//     role: 'ADMIN' | 'TEACHER';
+//   };
+// }
+
+// @Injectable()
+// export class RolesGuard implements CanActivate {
+//   canActivate(context: ExecutionContext): boolean {
+//     const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
+
+//     const user = request.user;
+
+//     if (!user) {
+//       throw new ForbiddenException('Пользователь не найден');
+//     }
+
+//     if (user.role !== 'ADMIN') {
+//       throw new ForbiddenException('Только Admin может выполнять это действие');
+//     }
+
+//     return true;
+//   }
+// }
 import {
   CanActivate,
   ExecutionContext,
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 
 interface AuthenticatedRequest extends Request {
   user: {
     sub: number;
     email: string;
-    role: 'ADMIN' | 'TEACHER';
+    role: string; 
   };
 }
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  canActivate(context: ExecutionContext): boolean {
-    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
+  
+  constructor(private reflector: Reflector) {}
 
+  canActivate(context: ExecutionContext): boolean {
+   
+    const requiredRoles = this.reflector.getAllAndOverride<string[]>('roles', [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    
+    if (!requiredRoles) {
+      return true;
+    }
+
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
     const user = request.user;
 
     if (!user) {
-      throw new ForbiddenException('Пользователь не найден');
+      throw new ForbiddenException('Пользователь не найден или не авторизован');
     }
 
-    if (user.role !== 'ADMIN') {
-      throw new ForbiddenException('Только Admin может выполнять это действие');
+   
+    const hasRole = requiredRoles.includes(user.role);
+    
+    if (!hasRole) {
+      throw new ForbiddenException(`Недостаточно прав. Требуемые роли: ${requiredRoles.join(', ')}`);
     }
 
     return true;
   }
 }
+
