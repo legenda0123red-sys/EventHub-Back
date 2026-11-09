@@ -1,17 +1,25 @@
+
 import {
   ConflictException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+
 import { UsersService } from '../users/users.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
+
 import { RegisterDto } from '../dto/register-dto';
-import * as bcrypt from 'bcrypt';
 import { LoginDto } from '../dto/login-dto';
-import { report } from 'process';
-import { UserDto } from '../dto/user-dto';
-import Role  from '@prisma/client'; 
+
+import { hash, compare } from 'bcrypt';
+
+export interface UserPayload {
+  sub: number;
+  email: string;
+  name: string;
+  role: string;
+}
 
 @Injectable()
 export class AuthService {
@@ -21,29 +29,28 @@ export class AuthService {
     private readonly prisma: PrismaService,
   ) {}
 
- // auth.service.ts
-async register(body: RegisterDto) {
-  const existingUser = await this.prisma.user.findUnique({
-    where: { email: body.email },
-  });
+  async register(body: RegisterDto) {
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email: body.email },
+    });
 
-  if (existingUser) {
-    throw new ConflictException('Пользователь с таким email уже существует');
+    if (existingUser) {
+      throw new ConflictException(
+        'Пользователь с таким email уже существует',
+      );
+    }
+
+    const hashedPass = await hash(body.password, 10);
+
+    return this.prisma.user.create({
+      data: {
+        name: body.name,
+        email: body.email,
+        password: hashedPass,
+        role: (body.role as 'USER' | 'ADMIN') || 'USER',
+      },
+    });
   }
-
-  const hashedPass = await bcrypt.hash(body.password, 10);
-
-  return this.prisma.user.create({
-    data: {
-      name: body.name,
-      email: body.email,
-      password: hashedPass,
-      // Если с фронтенда пришла роль, пишем её, иначе ставим 'USER' по умолчанию
-      role: (body.role as 'USER' | 'ADMIN') || 'USER'
-    },
-  });
-}
-
 
   async login(body: LoginDto) {
     const user = await this.users.findUserByEmail(body.email);
@@ -52,13 +59,16 @@ async register(body: RegisterDto) {
       throw new UnauthorizedException('Неверный email или пароль');
     }
 
-    const isPasswordValid = await bcrypt.compare(body.password, user.password);
+    const isPasswordValid = await compare(
+      body.password,
+      user.password,
+    );
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Неверный email или пароль');
     }
 
-    const payload = {
+    const payload: UserPayload = {
       sub: user.id,
       email: user.email,
       name: user.name,
@@ -79,8 +89,20 @@ async register(body: RegisterDto) {
   }
 
   async getMe(id: number) {
-    return this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+      },
     });
+
+    if (!user) {
+      throw new UnauthorizedException('Пользователь не найден');
+    }
+
+    return user;
   }
 }

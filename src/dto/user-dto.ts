@@ -1,40 +1,49 @@
 
-// import { IsString, IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  IsNotEmpty,
+  MinLength,
+  IsOptional,
+  IsIn,
+} from 'class-validator';
 
-// export class UserDto {
-//   @IsString()
-//   @IsNotEmpty()
-//   name!: string;
-
-//   @IsEmail()
-//   @IsNotEmpty()
-//   email!: string;
-
-//   @IsString()
-//   @IsNotEmpty()
-//   @MinLength(6)
-//   password!: string;
-// }
-// user-dto.ts
-import { IsString, IsEmail, IsNotEmpty, MinLength, IsOptional, IsEnum} from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UserDto {
+  @ApiProperty({
+    example: 'Sanjar',
+    description: 'Имя пользователя',
+  })
   @IsString()
   @IsNotEmpty()
-  name!: string;
+  name: string;
 
+  @ApiProperty({
+    example: 'sanjar@gmail.com',
+    description: 'Email пользователя',
+  })
   @IsEmail()
   @IsNotEmpty()
-  email!: string;
+  email: string;
 
+  @ApiProperty({
+    example: 'password123',
+    description: 'Пароль пользователя (минимум 6 символов)',
+    minLength: 6,
+  })
   @IsString()
   @IsNotEmpty()
   @MinLength(6)
-  password!: string;
+  password: string;
 
-
-  @IsEnum(['USER', 'ADMIN'])
+  @ApiPropertyOptional({
+    example: 'USER',
+    description: 'Роль пользователя',
+    enum: ['USER', 'ADMIN'],
+  })
+  @IsOptional()
   @IsString()
-  @IsOptional() // Поле необязательное, если фронтенд его не пришлет, сработает дефолт
-  role?: string; // <-- ДОБАВЬТЕ ЭТУ СТРОКУ
+  @IsIn(['USER', 'ADMIN'])
+  role: string;
 }

@@ -5,10 +5,10 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-   origin: "http://localhost:3000",
-  methods: ["GET", "POST", "PATCH", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-});
+    origin: process.env.FRONTEND_URL,
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -16,10 +16,11 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
-   const config = new DocumentBuilder()
+  const config = new DocumentBuilder()
     .setTitle('EventHub-Back')
     .setDescription('The eventHub API description')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
