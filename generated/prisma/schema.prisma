@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+
+  output = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum EventStatus {
+  PUBLISHED
+  MODERATION
+  DRAFT
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  BANNED
+}
+
+model User {
+  id            Int        @id @default(autoincrement())
+  name          String
+  email         String     @unique
+  password      String
+  events        Event[]
+  role          Role       @default(USER)
+  status        UserStatus @default(ACTIVE)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @default(now()) @updatedAt
+  registeredIds Int[]      @default([])
+}
+
+model Event {
+  id          Int         @id @default(autoincrement())
+  title       String      @db.VarChar(100)
+  description String      @db.VarChar(500)
+  category    String      @default("Фестивали") @db.VarChar(50)
+  status      EventStatus @default(MODERATION)
+  date        DateTime
+  address     String      @db.VarChar(125)
+  price       Decimal     @db.Decimal(10, 2)
+  capacity    Int
+  image       String      @db.VarChar(2048)
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  participantIds Int[]    @default([])
+}

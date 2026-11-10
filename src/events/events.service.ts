@@ -1,40 +1,3 @@
-// import { Injectable } from '@nestjs/common';
-// import { PrismaService } from '../prisma/prisma.service';
-// import { EventDto } from '../dto/event-dto';
-// import { connect } from 'http2';
-
-// @Injectable()
-// export class EventsService {
-//   constructor(private readonly prisma: PrismaService) {}
-
-//   async getEvents() {
-//     return this.prisma.event.findMany();
-//   }
-
-//   async createEvents(body: EventDto, userId: number) {
-//     return this.prisma.event.create({
-//       data: {
-//         title: body.title,
-//         description: body.description,
-//         date: body.date,
-//         address: body.address,
-//         price: body.price,
-//         capacity: body.capacity,
-//         image: body.image,
-//         user: {
-//           connect: {
-//             id: userId,
-//           },
-//         },
-//       },
-//     });
-//   }
-
-//   async deleteEvents(id: number) {
-//     return this.prisma.event.delete({ where: { id } });
-//   }
-// }
-
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EventDto } from '../dto/event-dto';
@@ -47,8 +10,8 @@ export class EventsService {
     return this.prisma.event.findMany({
       include: {
         user: {
-          select: { name: true, email: true }
-        }
+          select: { name: true, email: true },
+        },
       },
       orderBy: {
         createdAt: 'desc',
@@ -61,8 +24,8 @@ export class EventsService {
       where: { id },
       include: {
         user: {
-          select: { name: true, email: true }
-        }
+          select: { name: true, email: true },
+        },
       },
     });
     if (!event) {
@@ -76,8 +39,8 @@ export class EventsService {
       where: { userId },
       include: {
         user: {
-          select: { name: true, email: true }
-        }
+          select: { name: true, email: true },
+        },
       },
       orderBy: {
         createdAt: 'desc',
@@ -95,7 +58,10 @@ export class EventsService {
         price: body.price,
         capacity: body.capacity,
         image: body.image,
-        category: body.category && body.category.trim() !== '' ? body.category : undefined,
+        category:
+          body.category && body.category.trim() !== ''
+            ? body.category
+            : undefined,
         user: {
           connect: {
             id: userId,
@@ -125,9 +91,13 @@ export class EventsService {
     });
   }
 
-    async registerToEvent(eventId: number, userId: number) {
-    const event = await this.prisma.event.findUnique({ where: { id: eventId } }) as any;
-    const user = await this.prisma.user.findUnique({ where: { id: userId } }) as any;
+  async registerToEvent(eventId: number, userId: number) {
+    const event = (await this.prisma.event.findUnique({
+      where: { id: eventId },
+    })) as any;
+    const user = (await this.prisma.user.findUnique({
+      where: { id: userId },
+    })) as any;
 
     if (!event) throw new NotFoundException('Мероприятие не найдено');
     if (!user) throw new NotFoundException('Пользователь не найден');
@@ -144,22 +114,22 @@ export class EventsService {
     await this.prisma.event.update({
       where: { id: eventId },
       data: {
-        participantIds: { push: userId }
-      } as any
+        participantIds: { push: userId },
+      } as any,
     });
 
     await this.prisma.user.update({
       where: { id: userId },
       data: {
-        registeredIds: { push: eventId }
-      } as any
+        registeredIds: { push: eventId },
+      } as any,
     });
 
     return { message: 'Вы успешно записались на мероприятие' };
   }
   async deleteEvents(id: number) {
-  return this.prisma.event.delete({
-    where: { id },
-  });
-}
+    return this.prisma.event.delete({
+      where: { id },
+    });
+  }
 }

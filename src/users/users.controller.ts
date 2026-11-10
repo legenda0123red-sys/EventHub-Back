@@ -1,4 +1,3 @@
-
 import {
   Body,
   Controller,
@@ -36,19 +35,6 @@ interface AuthenticatedRequest {
 @Controller('users')
 export class UsersController {
   constructor(private readonly users: UsersService) {}
-
-  @UseGuards(JwtAuthGuard)
-  @Get('me/events')
-  @ApiOperation({
-    summary: 'Получить мероприятия текущего пользователя',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Объект с созданными и посещаемыми ивентами',
-  })
-  async getMyEventsAndRegistrations(@Req() req: AuthenticatedRequest) {
-    return this.users.getMyEventsAndRegistrations(req.user.sub);
-  }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('all')

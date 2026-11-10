@@ -20,6 +20,7 @@ async function main() {
       email: 'admin@gmail.com',
       password,
       role: 'ADMIN',
+      status: 'ACTIVE',
     },
   });
 
